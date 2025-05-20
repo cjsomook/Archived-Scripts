@@ -23,7 +23,7 @@ end
 
 aa = game:GetObjects("rbxassetid://01997056190")[1]
 aa.Parent = game.CoreGui
-wait(0.2)
+task.wait(0.2)
 GUI = aa.PopupFrame.PopupFrame
 pos = 0
 
@@ -39,8 +39,8 @@ ignore = {
 }
 
 GUI.Close.MouseButton1Click:connect(function()
-	GUI:TweenSize(UDim2.new(0, 360, 0, 0),"Out","Quad",0.5,true) wait(0.6)
-	GUI.Parent:TweenSize(UDim2.new(0, 0, 0, 20),"Out","Quad",0.5,true) wait(0.6)
+	GUI:TweenSize(UDim2.new(0, 360, 0, 0),"Out","Quad",0.5,true) task.wait(0.6)
+	GUI.Parent:TweenSize(UDim2.new(0, 0, 0, 20),"Out","Quad",0.5,true) task.wait(0.6)
 	itemadded:Disconnect()
 	aa:Destroy()
 end)
@@ -68,13 +68,13 @@ function printTable(tbl)
 
 '..string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = {'
 				run(v, false)
-				wait()
+				task.wait()
 			else
 				-- print(string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = ' .. tostring(v))
 				GUI.Store.Text = GUI.Store.Text..'
 
 '..string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = ' .. tostring(v)
-				wait()
+				task.wait()
 			end
 		end
 		-- print(string.rep(' ', depthCount) .. '}')
@@ -113,7 +113,7 @@ GUI.SS.MouseButton1Click:connect(function()
 	if writefileExploit() then
 		if running == false then
 			GUI.Load.Visible = true running = true
-			GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) wait(0.3)
+			GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) task.wait(0.3)
 			for _, child in pairs(GUI.Logs:GetChildren()) do
 				if child:FindFirstChild('ImageButton') then local bttn = child:FindFirstChild('ImageButton')
 					if bttn.BackgroundTransparency == 0 then
@@ -123,7 +123,7 @@ GUI.SS.MouseButton1Click:connect(function()
 			end
 			GUI.Store.Visible = true
 			printTable(writeaudio)
-			wait(0.2)
+			task.wait(0.2)
 			local filename = 0
 			local function write()
 				local file
