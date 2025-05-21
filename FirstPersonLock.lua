@@ -39,12 +39,12 @@ uiStroke.Transparency = 0
 uiStroke.Parent = toggleButton
 
 local buttonTextStroke = Instance.new("UIStroke")
-uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
-uiStroke.Color = Color3.fromRGB(0, 0, 0)
-uiStroke.LineJoinMode = Enum.LineJoinMode.Round
-uiStroke.Thickness = 1.25
-uiStroke.Name = "TextStroke"
-uiStroke.Parent = toggleButton
+buttonTextStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+buttonTextStroke.Color = Color3.fromRGB(0, 0, 0)
+buttonTextStroke.LineJoinMode = Enum.LineJoinMode.Round
+buttonTextStroke.Thickness = 1.25
+buttonTextStroke.Name = "TextStroke"
+buttonTextStroke.Parent = toggleButton
 
 local isDragging = false
 local lastInputPosition = Vector2.new(0, 0)
@@ -114,35 +114,35 @@ end
 RunService.RenderStepped:Connect(updateCamera)
 
 local function onCharacterAppearanceLoaded(character)
-    if not isFirstPersonLocked then
-        camera.CameraType = Enum.CameraType.Custom
-        if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
-            character.Head.Transparency = 0
-        end
-    else
-        if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
-            character.Head.Transparency = 1
-        end
-    end
+	if not isFirstPersonLocked then
+		camera.CameraType = Enum.CameraType.Custom
+		if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
+			character.Head.Transparency = 0
+		end
+	else
+		if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
+			character.Head.Transparency = 1
+		end
+	end
 end
 
 player.CharacterAdded:Connect(function(character)
-    if not isFirstPersonLocked then
-        camera.CameraType = Enum.CameraType.Custom
-        if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
-            character.Head.Transparency = 0
-        end
-    else
-        if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
-            character.Head.Transparency = 1
-        end
-    end
-    player.CharacterAppearanceLoaded:Connect(onCharacterAppearanceLoaded)
+	if not isFirstPersonLocked then
+		camera.CameraType = Enum.CameraType.Custom
+		if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
+			character.Head.Transparency = 0
+		end
+	else
+		if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
+			character.Head.Transparency = 1
+		end
+	end
+	player.CharacterAppearanceLoaded:Connect(onCharacterAppearanceLoaded)
 end)
 
 if player.Character then
-    player.CharacterAppearanceLoaded:Connect(onCharacterAppearanceLoaded)
-    if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
-        player.Character.Head.Transparency = isFirstPersonLocked and 1 or 0
-    end
+	player.CharacterAppearanceLoaded:Connect(onCharacterAppearanceLoaded)
+	if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
+		player.Character.Head.Transparency = isFirstPersonLocked and 1 or 0
+	end
 end
