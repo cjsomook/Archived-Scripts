@@ -64,16 +64,12 @@ function printTable(tbl)
 		for i,v in pairs(val) do
 			if type(v) == 'table' then
 				-- print(string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = {')
-				GUI.Store.Text = GUI.Store.Text..'
-
-'..string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = {'
+				GUI.Store.Text = GUI.Store.Text..''..string.rep(' ', depthCount) .. '[' .. tostring(i) .. '] = {'
 				run(v, false)
 				task.wait()
 			else
 				-- print(string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = ' .. tostring(v))
-				GUI.Store.Text = GUI.Store.Text..'
-
-'..string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = ' .. tostring(v)
+				GUI.Store.Text = GUI.Store.Text..''..string.rep(' ', depthCount) .. ' [' .. tostring(i) .. '] = ' .. tostring(v)
 				task.wait()
 			end
 		end
@@ -133,11 +129,7 @@ GUI.SS.MouseButton1Click:connect(function()
 					write()
 				else
 					local text = tostring(GUI.Store.Text)
-					text = text:gsub('
-
-', '
-
-')
+					text = text:gsub('', '')
 					writefile("Audios"..filename..".txt", text)
 				end
 			end
@@ -155,9 +147,7 @@ GUI.SS.MouseButton1Click:connect(function()
 			writeaudio = {}
 			game:FindService('StarterGui'):SetCore('SendNotification', {
 				Title = 'Audio Logger',
-				Text = 'Saved audios
-
-(Audios'..filename..'.txt)',
+				Text = 'Saved audios(Audios'..filename..'.txt)',
 				Icon = 'http://www.roblox.com/asset/?id=176572847',
 				Duration = 5,
 			})
@@ -192,11 +182,7 @@ GUI.SA.MouseButton1Click:connect(function()
 					write()
 				else
 					local text = tostring(GUI.Store.Text)
-					text = text:gsub('
-
-', '
-
-')
+					text = text:gsub('', '')
 					writefile("Audios"..filename..".txt", text)
 				end
 			end
@@ -214,9 +200,7 @@ GUI.SA.MouseButton1Click:connect(function()
 			writeaudio = {}
 			game:FindService('StarterGui'):SetCore('SendNotification', {
 				Title = 'Audio Logger',
-				Text = 'Saved audios
-
-(Audios'..filename..'.txt)',
+				Text = 'Saved audios(Audios'..filename..'.txt)',
 				Icon = 'http://www.roblox.com/asset/?id=176572847',
 				Duration = 5,
 			})
@@ -240,7 +224,7 @@ function getaudio(place)
 			spawn(function()
 				if child:IsA("Sound") and not GUI.Logs:FindFirstChild(child.SoundId) and not FindTable(ignore,child.SoundId) then
 					local id = string.match(child.SoundId, "rbxasset://sounds.+") or string.match(child.SoundId, "&hash=.+") or string.match(child.SoundId, "%d+")
-					if id ~= nil then		
+					if id ~= nil then
 						local newsound = GUI.Audio:Clone()
 						if string.sub(id, 1, 6) == "&hash=" or string.sub(id, 1, 7) == "&0hash=" then
 							id = string.sub(id, (string.sub(id, 1, 6) == "&hash=" and 7) or (string.sub(id, 1, 7) == "&0hash=" and 8), string.len(id))
@@ -278,15 +262,7 @@ function getaudio(place)
 						end)
 						newsound.Click.MouseButton1Click:Connect(function()
 							if GUI.Info.Visible ~= true then
-								GUI.Info.TextLabel.Text = "Name: " ..audioname.. "
-
-
-
-ID: " .. child.SoundId .. "
-
-
-
-Workspace Name: " .. child.Name
+								GUI.Info.TextLabel.Text = "Name: " ..audioname.. "ID: " .. child.SoundId .. "Workspace Name: " .. child.Name
 								selectedaudio = child.SoundId
 								GUI.Info.Visible = true
 							end
@@ -355,7 +331,7 @@ itemadded = game.DescendantAdded:connect(function(added)
 	task.wait()
 	if autoscan == true and added:IsA('Sound') and not GUI.Logs:FindFirstChild(added.SoundId) and not FindTable(ignore,added.SoundId) then
 		local id = string.match(added.SoundId, "rbxasset://sounds.+") or string.match(added.SoundId, "&hash=.+") or string.match(added.SoundId, "%d+")
-		if id ~= nil then		
+		if id ~= nil then
 			local newsound = GUI.Audio:Clone()
 			if string.sub(id, 1, 6) == "&hash=" or string.sub(id, 1, 7) == "&0hash=" then
 				id = string.sub(id, (string.sub(id, 1, 6) == "&hash=" and 7) or (string.sub(id, 1, 7) == "&0hash=" and 8), string.len(id))
@@ -397,15 +373,7 @@ itemadded = game.DescendantAdded:connect(function(added)
 			end)
 			newsound.Click.MouseButton1Click:Connect(function()
 				if GUI.Info.Visible ~= true then
-					GUI.Info.TextLabel.Text = "Name: " ..audioname.. "
-
-
-
-ID: " .. added.SoundId .. "
-
-
-
-Workspace Name: " .. added.Name
+					GUI.Info.TextLabel.Text = "Name: " ..audioname.. "ID: " .. added.SoundId .. "Workspace Name: " .. added.Name
 					selectedaudio = added.SoundId
 					GUI.Info.Visible = true
 				end
@@ -419,7 +387,7 @@ Workspace Name: " .. added.Name
 end)
 
 GUI.Info.Copy.MouseButton1Click:Connect(function()
-	if pcall(function() Synapse:Copy(selectedaudio) end) then	
+	if pcall(function() Synapse:Copy(selectedaudio) end) then
 	else
 		local clip = setclipboard or Clipboard.set
 		clip(selectedaudio)
