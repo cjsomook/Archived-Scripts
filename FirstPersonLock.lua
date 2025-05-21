@@ -109,7 +109,6 @@ local function updateCamera()
 			eyeOffset = getgenv().FPLockOffset
 		else
 			if getgenv().FPLockOffset then
-				return
 			end
 		end
 		camera.CFrame = head.CFrame * eyeOffset
