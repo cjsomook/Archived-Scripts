@@ -109,6 +109,7 @@ local function updateCamera()
 			eyeOffset = getgenv().FPLockOffset
 		else
 			if getgenv().FPLockOffset then
+				print("Warning: getgenv().FPLockOffset is not a valid CFrame, using default value.")
 			end
 		end
 		camera.CFrame = head.CFrame * eyeOffset
