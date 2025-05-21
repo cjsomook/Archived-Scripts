@@ -144,7 +144,7 @@ GUI.SS.MouseButton1Click:connect(function()
 			write()
 			for rep = 1,10 do
 				GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
-				wait(0.05)
+				task.wait(0.05)
 			end
 			GUI.Load.Visible = false
 			GUI.Load.BackgroundTransparency = 0
@@ -176,13 +176,13 @@ GUI.SA.MouseButton1Click:connect(function()
 	if writefileExploit() then
 		if running == false then
 			GUI.Load.Visible = true running = true
-			GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) wait(0.3)
+			GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) task.wait(0.3)
 			for _, child in pairs(GUI.Logs:GetChildren()) do
 				writeaudio[#writeaudio + 1] = {NAME = child.NAME.Value, ID = child.ID.Value}
 			end
 			GUI.Store.Visible = true
 			printTable(writeaudio)
-			wait(0.2)
+			task.wait(0.2)
 			local filename = 0
 			local function write()
 				local file
@@ -203,7 +203,7 @@ GUI.SA.MouseButton1Click:connect(function()
 			write()
 			for rep = 1,10 do
 				GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
-				wait(0.05)
+				task.wait(0.05)
 			end
 			GUI.Load.Visible = false
 			GUI.Load.BackgroundTransparency = 0
@@ -235,7 +235,7 @@ selectedaudio = nil
 function getaudio(place)
 	if running == false then
 		GUI.Load.Visible = true running = true
-		GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) wait(0.3)
+		GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) task.wait(0.3)
 		for _, child in pairs(place:GetDescendants()) do
 			spawn(function()
 				if child:IsA("Sound") and not GUI.Logs:FindFirstChild(child.SoundId) and not FindTable(ignore,child.SoundId) then
@@ -298,7 +298,7 @@ Workspace Name: " .. child.Name
 	end
 	for rep = 1,10 do
 		GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
-		wait(0.05)
+		task.wait(0.05)
 	end
 	GUI.Load.Visible = false
 	GUI.Load.BackgroundTransparency = 0
@@ -352,7 +352,7 @@ GUI.AutoScan.MouseButton1Click:connect(function()
 end)
 
 itemadded = game.DescendantAdded:connect(function(added)
-	wait()
+	task.wait()
 	if autoscan == true and added:IsA('Sound') and not GUI.Logs:FindFirstChild(added.SoundId) and not FindTable(ignore,added.SoundId) then
 		local id = string.match(added.SoundId, "rbxasset://sounds.+") or string.match(added.SoundId, "&hash=.+") or string.match(added.SoundId, "%d+")
 		if id ~= nil then		
