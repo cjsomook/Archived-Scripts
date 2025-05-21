@@ -130,7 +130,7 @@ player.CharacterAdded:Connect(function(character)
     if not isFirstPersonLocked then
         camera.CameraType = Enum.CameraType.Custom
         if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
-            character.Head.Transparency = 
+            character.Head.Transparency = 0
         end
     else
         if player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head") then
