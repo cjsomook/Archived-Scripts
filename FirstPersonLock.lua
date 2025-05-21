@@ -105,13 +105,6 @@ local function updateCamera()
 	if isFirstPersonLocked and player.Character:FindFirstChild("Head") then
 		local head = player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head")
 		local eyeOffset = CFrame.new(0, 0, 0) -- just a small offset to avoid clipping into head because it's fuckin' weird lookin' ahh (Default values: "0, 0, -0.3", "0, 0.3, -0.6")
-		if getgenv().FPLockOffset and typeof(getgenv().FPLockOffset) == "CFrame" then
-			eyeOffset = getgenv().FPLockOffset
-		else
-			if getgenv().FPLockOffset then
-				print("Warning: getgenv().FPLockOffset is not a valid CFrame, using default value.")
-			end
-		end
 		camera.CFrame = head.CFrame * eyeOffset
 	elseif isFirstPersonLocked then
 		print("Player Head not found; waiting for character to fully load.")
