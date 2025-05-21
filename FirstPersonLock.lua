@@ -7,6 +7,8 @@ local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 local isFirstPersonLocked = false
 
+local eyeOffset = getgenv().FPLockOffset or CFrame.new(0, 0, 0) -- just a small offset to avoid clipping into head because it's fuckin' weird lookin' ahh (Best values: "0, 0, -0.3", "0, 0.3, -0.6")
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "FirstPersonLockGui"
 screenGui.Parent = CoreGui
@@ -51,7 +53,7 @@ local lastInputPosition = Vector2.new(0, 0)
 
 local function onInputBegan(input, gameProcessed)
 	if gameProcessed then return end
-	--print("Input began on button:", input.UserInputType.Name)
+	-- print("Input began on button:", input.UserInputType.Name)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		isDragging = true
 		lastInputPosition = input.Position
@@ -74,7 +76,7 @@ end
 local function onInputEnded(input, gameProcessed)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		isDragging = false
-		--print("Input ended:", input.UserInputType.Name, "Dragging:", isDragging)
+		-- print("Input ended:", input.UserInputType.Name, "Dragging:", isDragging)
 	end
 end
 
@@ -85,7 +87,7 @@ UserInputService.InputEnded:Connect(onInputEnded)
 local function toggleFirstPersonLock()
 	isFirstPersonLocked = not isFirstPersonLocked
 	toggleButton.Text = isFirstPersonLocked and "Unlock" or "Lock"
-	--print("Toggled first-person lock:", isFirstPersonLocked)
+	-- print("Toggled first-person lock:", isFirstPersonLocked)
 	if isFirstPersonLocked then
 		camera.CameraType = Enum.CameraType.Scriptable
 		if player.Character and player.Character:FindFirstChild("Head") or player.Character:WaitForChild("Head") then
@@ -104,7 +106,6 @@ toggleButton.MouseButton1Click:Connect(toggleFirstPersonLock)
 local function updateCamera()
 	if isFirstPersonLocked and player.Character:FindFirstChild("Head") then
 		local head = player.Character:WaitForChild("Head") or player.Character:FindFirstChild("Head")
-		local eyeOffset = CFrame.new(0, 0, 0) -- just a small offset to avoid clipping into head because it's fuckin' weird lookin' ahh (Default values: "0, 0, -0.3", "0, 0.3, -0.6")
 		camera.CFrame = head.CFrame * eyeOffset
 	elseif isFirstPersonLocked then
 		print("Player Head not found; waiting for character to fully load.")
