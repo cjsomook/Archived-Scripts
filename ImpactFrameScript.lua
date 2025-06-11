@@ -75,7 +75,7 @@ local function playImpactFrames()
 		if frame and frame:IsA("ImageLabel") then
 			frame.ImageTransparency = 0
 			frame.Visible = true
-			wait(frameDuration)
+			task.wait(frameDuration)
 			frame.ImageTransparency = 1
 			frame.Visible = false
 		end
