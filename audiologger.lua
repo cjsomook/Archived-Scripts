@@ -134,14 +134,14 @@ GUI.SS.MouseButton1Click:connect(function()
             local filename = 0
             local function write()
                 local file
-                pcall(function() file = readfile("Scraped_Audios_"..filename..".txt") end)
+                pcall(function() file = readfile("Scraped_Audios_"..filename..".json") end)
                 if file then
                     filename = filename+1
                     write()
                 else
                     local text = tostring(GUI.Store.Text)
                     text = text:gsub('', '')
-                    writefile("Scraped_Audios_"..filename..".txt", text)
+                    writefile("Scraped_Audios_"..filename..".json", text)
                 end
             end
             write()
@@ -158,7 +158,7 @@ GUI.SS.MouseButton1Click:connect(function()
             writeaudio = {}
             game:FindService('StarterGui'):SetCore('SendNotification', {
                 Title = 'Audio Logger',
-                Text = 'Saved Logged Audios (Scraped_Audios_'..filename..'.txt)',
+                Text = 'Saved Logged Audios (Scraped_Audios_'..filename..'.json)',
                 Icon = 'http://www.roblox.com/asset/?id=176572847',
                 Duration = 5,
             })
@@ -187,14 +187,14 @@ GUI.SA.MouseButton1Click:connect(function()
             local filename = 0
             local function write()
                 local file
-                pcall(function() file = readfile("Scraped_Audios_"..filename..".txt") end)
+                pcall(function() file = readfile("Scraped_Audios_"..filename..".json") end)
                 if file then
                     filename = filename+1
                     write()
                 else
                     local text = tostring(GUI.Store.Text)
                     text = text:gsub('', '')
-                    writefile("Scraped_Audios_"..filename..".txt", text)
+                    writefile("Scraped_Audios_"..filename..".json", text)
                 end
             end
             write()
@@ -211,7 +211,7 @@ GUI.SA.MouseButton1Click:connect(function()
             writeaudio = {}
             game:FindService('StarterGui'):SetCore('SendNotification', {
                 Title = 'Audio Logger',
-                Text = 'Saved Logged Audios (Scraped_Audios_'..filename..'.txt)',
+                Text = 'Saved Logged Audios (Scraped_Audios_'..filename..'.json)',
                 Icon = 'http://www.roblox.com/asset/?id=176572847',
                 Duration = 5,
             })
