@@ -2,32 +2,24 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
-function sandbox(var, func)
-    local env = getfenv(func)
-    local newenv =
-        setmetatable(
-        {},
-        {
-            __index = function(self, k)
-                if k == "script" then
-                    return var
-                else
-                    return env[k]
-                end
-            end
-        }
-    )
-    setfenv(func, newenv)
-    return func
-end
+local HttpService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
 
-aa = game:GetObjects("rbxassetid://01997056190")[1]
+local aa = game:GetObjects("rbxassetid://01997056190")[1]
 aa.Parent = game.CoreGui
 task.wait(0.2)
-GUI = aa.PopupFrame.PopupFrame
-pos = 0
 
-ignore = {
+local GUI = aa.PopupFrame.PopupFrame
+local pos = 0
+local writeaudio = {}
+local running = false
+local autoscan = false
+local selectedaudio = nil
+
+local ignore = {
     "rbxasset://sounds/action_get_up.mp3",
     "rbxasset://sounds/uuhhh.mp3",
     "rbxasset://sounds/action_falling.mp3",
@@ -39,251 +31,171 @@ ignore = {
     "rbxasset://sounds/action_footsteps_plastic.mp3"
 }
 
-GUI.Close.MouseButton1Click:connect(function()
-    GUI:TweenSize(UDim2.new(0, 360, 0, 0),"Out","Quad",0.5,true) task.wait(0.6)
-    GUI.Parent:TweenSize(UDim2.new(0, 0, 0, 20),"Out","Quad",0.5,true) task.wait(0.6)
-    itemadded:Disconnect()
-    aa:Destroy()
-end)
-
-local min = false
-GUI.Minimize.MouseButton1Click:connect(function()
-    if min == false then
-        GUI:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) min = true
-    else
-        GUI:TweenSize(UDim2.new(0, 360, 0, 260),"Out","Quad",0.5,true) min = false
+local function findTable(tbl, name)
+    for _, v in ipairs(tbl) do
+        if v == name then return true end
     end
-end)
-
-function printTable(tbl)
-    if type(tbl) ~= "table" then return end
-    local lines = {}
-    local function serialize(value, indent)
-        indent = indent or 0
-        local spacing = string.rep("    ", indent)
-        if type(value) == "table" then
-            table.insert(lines, spacing .. "{")
-            for k, v in pairs(value) do
-                local key
-                if type(k) == "number" then
-                    key = "[" .. k .. "]"
-                else
-                    key = '["' .. tostring(k) .. '"]'
-                end
-                if type(v) == "table" then
-                    table.insert(lines, spacing .. "    " .. key .. " = ")
-                    serialize(v, indent + 2)
-                else
-                    local val
-                    if type(v) == "string" then
-                        val = '"' .. v .. '"'
-                    else
-                        val = tostring(v)
-                    end
-                    table.insert(lines, spacing .. "    " .. key .. " = " .. val .. ",")
-                end
-            end
-            table.insert(lines, spacing .. "}")
-        end
-    end
-    serialize(tbl, 0)
-    GUI.Store.Text = table.concat(lines, "\n")
-end
-
-function refreshlist()
-    pos = 0
-    GUI.Logs.CanvasSize = UDim2.new(0,0,0,0)
-    for i,v in pairs(GUI.Logs:GetChildren()) do
-        v.Position = UDim2.new(0,0,0, pos)
-        GUI.Logs.CanvasSize = UDim2.new(0,0,0, pos+20)
-        pos = pos+20
-    end
-end
-
-function FindTable(Table, Name)
-    for i,v in pairs(Table) do
-        if v == Name then
-            return true
-        end end
     return false
 end
 
-function writefileExploit()
-    if writefile then
-        return true
+local function refreshlist()
+    pos = 0
+    GUI.Logs.CanvasSize = UDim2.new(0, 0, 0, 0)
+    for _, v in ipairs(GUI.Logs:GetChildren()) do
+        v.Position = UDim2.new(0, 0, 0, pos)
+        GUI.Logs.CanvasSize = UDim2.new(0, 0, 0, pos + 20)
+        pos = pos + 20
     end
 end
 
-writeaudio = {}
-running = false
-GUI.SS.MouseButton1Click:connect(function()
-    if writefileExploit() then
-        if running == false then
-            GUI.Load.Visible = true running = true
-            GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) task.wait(0.3)
-            for _, child in pairs(GUI.Logs:GetChildren()) do
-                if child:FindFirstChild('ImageButton') then local bttn = child:FindFirstChild('ImageButton')
-                    if bttn.BackgroundTransparency == 0 then
-                        writeaudio[#writeaudio + 1] = {NAME = child.NAME.Value, ID = child.ID.Value}
-                    end
-                end
-            end
-            GUI.Store.Visible = true
-            printTable(writeaudio)
-            task.wait(0.2)
-            local filename = 0
-            local function write()
-                local file
-                pcall(function() file = readfile("Scraped_Audios_"..filename..".json") end)
-                if file then
-                    filename = filename+1
-                    write()
-                else
-                    local text = tostring(GUI.Store.Text)
-                    text = text:gsub('', '')
-                    writefile("Scraped_Audios_"..filename..".json", text)
-                end
-            end
-            write()
-            for rep = 1,10 do
-                GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
-                task.wait(0.05)
-            end
-            GUI.Load.Visible = false
-            GUI.Load.BackgroundTransparency = 0
-            GUI.Load.Size = UDim2.new(0, 0, 0, 20)
-            running = false
-            GUI.Store.Visible = false
-            GUI.Store.Text = ''
-            writeaudio = {}
-            game:FindService('StarterGui'):SetCore('SendNotification', {
-                Title = 'Audio Logger',
-                Text = 'Saved Logged Audios (Scraped_Audios_'..filename..'.json)',
-                Icon = 'http://www.roblox.com/asset/?id=176572847',
-                Duration = 5,
-            })
-        end
-    else
-        game:FindService('StarterGui'):SetCore('SendNotification', {
+local function saveLoggedAudios(onlySelected)
+    if not writefile then
+        StarterGui:SetCore('SendNotification', {
             Title = 'Audio Logger',
-            Text = 'Exploit cannot writefile :(',
+            Text = 'Your executor does not support writefile!',
+            Duration = 5,
+        })
+        return
+    end
+    
+    if running then return end
+    running = true
+    
+    GUI.Load.Visible = true
+    GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20), "Out", "Quad", 0.5, true)
+    task.wait(0.3)
+    
+    writeaudio = {}
+    for _, child in ipairs(GUI.Logs:GetChildren()) do
+        if child:FindFirstChild('ImageButton') then
+            local bttn = child:FindFirstChild('ImageButton')
+            if not onlySelected or (onlySelected and bttn.BackgroundTransparency == 0) then
+                table.insert(writeaudio, {
+                    name = child.NAME.Value,
+                    id = child.ID.Value
+                })
+            end
+        end
+    end
+    
+    local success, jsonText = pcall(function()
+        return HttpService:JSONEncode(writeaudio)
+    end)
+    
+    if success then
+        GUI.Store.Visible = true
+        GUI.Store.Text = jsonText
+        task.wait(0.2)
+    
+        local filename = 0
+        local function getUnusedFilename()
+            local fileExists = pcall(function() return readfile("Scraped_Audios_" .. filename .. ".json") end)
+            if fileExists then
+                filename = filename + 1
+                getUnusedFilename()
+            end
+        end
+        getUnusedFilename()
+    
+        writefile("Scraped_Audios_" .. filename .. ".json", jsonText)
+
+        StarterGui:SetCore('SendNotification', {
+            Title = 'Audio Logger',
+            Text = 'Saved Logged Audios (Scraped_Audios_' .. filename .. '.json)',
             Icon = 'http://www.roblox.com/asset/?id=176572847',
             Duration = 5,
         })
     end
-end)
-
-GUI.SA.MouseButton1Click:connect(function()
-    if writefileExploit() then
-        if running == false then
-            GUI.Load.Visible = true running = true
-            GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) task.wait(0.3)
-            for _, child in pairs(GUI.Logs:GetChildren()) do
-                writeaudio[#writeaudio + 1] = {NAME = child.NAME.Value, ID = child.ID.Value}
-            end
-            GUI.Store.Visible = true
-            printTable(writeaudio)
-            task.wait(0.2)
-            local filename = 0
-            local function write()
-                local file
-                pcall(function() file = readfile("Scraped_Audios_"..filename..".json") end)
-                if file then
-                    filename = filename+1
-                    write()
-                else
-                    local text = tostring(GUI.Store.Text)
-                    text = text:gsub('', '')
-                    writefile("Scraped_Audios_"..filename..".json", text)
-                end
-            end
-            write()
-            for rep = 1,10 do
-                GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
-                task.wait(0.05)
-            end
-            GUI.Load.Visible = false
-            GUI.Load.BackgroundTransparency = 0
-            GUI.Load.Size = UDim2.new(0, 0, 0, 20)
-            running = false
-            GUI.Store.Visible = false
-            GUI.Store.Text = ''
-            writeaudio = {}
-            game:FindService('StarterGui'):SetCore('SendNotification', {
-                Title = 'Audio Logger',
-                Text = 'Saved Logged Audios (Scraped_Audios_'..filename..'.json)',
-                Icon = 'http://www.roblox.com/asset/?id=176572847',
-                Duration = 5,
-            })
-        end
-    else
-        game:FindService('StarterGui'):SetCore('SendNotification', {
-            Title = 'Audio Logger',
-            Text = 'Exploit cannot writefile :(',
-            Icon = 'http://www.roblox.com/asset/?id=176572847',
-            Duration = 5,
-        })
+    
+    for rep = 1, 10 do
+        GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
+        task.wait(0.05)
     end
-end)
+    
+    GUI.Load.Visible = false
+    GUI.Load.BackgroundTransparency = 0
+    GUI.Load.Size = UDim2.new(0, 0, 0, 20)
+    GUI.Store.Visible = false
+    GUI.Store.Text = ''
+    running = false
+end
 
-selectedaudio = nil
-function getaudio(place)
-    if running == false then
-        GUI.Load.Visible = true running = true
-        GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20),"Out","Quad",0.5,true) task.wait(0.3)
-        for _, child in pairs(place:GetDescendants()) do
-            spawn(function()
-                if child:IsA("Sound") and not GUI.Logs:FindFirstChild(child.SoundId) and not FindTable(ignore,child.SoundId) then
-                    local id = string.match(child.SoundId, "rbxasset://sounds.+") or string.match(child.SoundId, "&hash=.+") or string.match(child.SoundId, "%d+")
-                    if id ~= nil then
-                        local newsound = GUI.Audio:Clone()
-                        if string.sub(id, 1, 6) == "&hash=" or string.sub(id, 1, 7) == "&0hash=" then
-                            id = string.sub(id, (string.sub(id, 1, 6) == "&hash=" and 7) or (string.sub(id, 1, 7) == "&0hash=" and 8), string.len(id))
-                            newsound.ImageButton.Image = 'rbxassetid://1453863294'
-                        end
-                        newsound.Parent = GUI.Logs
-                        newsound.Name = child.SoundId
-                        newsound.Visible = true
-                        newsound.Position = UDim2.new(0,0,0, pos)
-                        GUI.Logs.CanvasSize = UDim2.new(0,0,0, pos+20)
-                        pos = pos+20
-                        local function findname()
-                            Asset = game:GetService("MarketplaceService"):GetProductInfo(id)
-                        end
-                        local audioname = 'error'
-                        local success, message = pcall(findname)
-                        if success then
-                            newsound.TextLabel.Text = Asset.Name
-                            audioname = Asset.Name
-                        else
-                            newsound.TextLabel.Text = child.Name
-                            audioname = child.Name
-                        end
-                        local data = Instance.new('StringValue') data.Parent = newsound data.Value = child.SoundId data.Name = 'ID'
-                        local data2 = Instance.new('StringValue') data2.Parent = newsound data2.Value = audioname data2.Name = 'NAME'
-                        local soundselected = false
-                        newsound.ImageButton.MouseButton1Click:Connect(function()
-                            if GUI.Info.Visible ~= true then
-                                if soundselected == false then soundselected = true
-                                    newsound.ImageButton.BackgroundTransparency = 0
-                                else soundselected = false
-                                    newsound.ImageButton.BackgroundTransparency = 1
-                                end
-                            end
-                        end)
-                        newsound.Click.MouseButton1Click:Connect(function()
-                            if GUI.Info.Visible ~= true then
-                                GUI.Info.TextLabel.Text = "Name: " ..audioname.. "ID: " .. child.SoundId .. "Workspace Name: " .. child.Name
-                                selectedaudio = child.SoundId
-                                GUI.Info.Visible = true
-                            end
-                        end)
-                    end
-                end
-            end)
-        end
+GUI.SS.MouseButton1Click:Connect(function() saveLoggedAudios(true) end)
+GUI.SA.MouseButton1Click:Connect(function() saveLoggedAudios(false) end)
+
+local function processAudioElement(child)
+    if not child:IsA("Sound") or GUI.Logs:FindFirstChild(child.SoundId) or findTable(ignore, child.SoundId) then 
+        return 
     end
-    for rep = 1,10 do
+    
+    local numericId = string.match(child.SoundId, "%d+")
+    if not numericId then return end
+    
+    local newsound = GUI.Audio:Clone()
+    if string.match(child.SoundId, "&%d*hash=") then
+        newsound.ImageButton.Image = 'rbxassetid://1453863294'
+    end
+    
+    newsound.Parent = GUI.Logs
+    newsound.Name = child.SoundId
+    newsound.Visible = true
+    newsound.Position = UDim2.new(0, 0, 0, pos)
+    
+    local scrolldown = (GUI.Logs.CanvasPosition.Y == GUI.Logs.CanvasSize.Y.Offset - 230)
+    GUI.Logs.CanvasSize = UDim2.new(0, 0, 0, pos + 20)
+    pos = pos + 20
+    
+    local audioname = child.Name
+    local success, assetInfo = pcall(function()
+        return MarketplaceService:GetProductInfo(tonumber(numericId))
+    end)
+    if success and assetInfo and assetInfo.Name then
+        audioname = assetInfo.Name
+    end
+    
+    newsound.TextLabel.Text = audioname
+    
+    local data = Instance.new('StringValue', newsound)
+    data.Name = 'ID'
+    data.Value = child.SoundId
+    
+    local data2 = Instance.new('StringValue', newsound)
+    data2.Name = 'NAME'
+    data2.Value = audioname
+    
+    local soundselected = false
+    newsound.ImageButton.MouseButton1Click:Connect(function()
+        if not GUI.Info.Visible then
+            soundselected = not soundselected
+            newsound.ImageButton.BackgroundTransparency = soundselected and 0 or 1
+        end
+    end)
+    
+    newsound.Click.MouseButton1Click:Connect(function()
+        if not GUI.Info.Visible then
+            GUI.Info.TextLabel.Text = "Name: " .. audioname .. " | ID: " .. child.SoundId .. " | Path Name: " .. child.Name
+            selectedaudio = child.SoundId
+            GUI.Info.Visible = true
+        end
+    end)
+    
+    if scrolldown then
+        GUI.Logs.CanvasPosition = Vector2.new(0, 999999)
+    end
+end
+
+local function getaudio(folder)
+    if running then return end
+    running = true
+    GUI.Load.Visible = true
+    GUI.Load:TweenSize(UDim2.new(0, 360, 0, 20), "Out", "Quad", 0.5, true)
+    task.wait(0.3)
+    
+    for _, child in ipairs(folder:GetDescendants()) do
+        task.spawn(processAudioElement, child)
+    end
+    
+    for rep = 1, 10 do
         GUI.Load.BackgroundTransparency = GUI.Load.BackgroundTransparency + 0.1
         task.wait(0.05)
     end
@@ -293,157 +205,108 @@ function getaudio(place)
     running = false
 end
 
-GUI.All.MouseButton1Click:connect(function() getaudio(game)end)
-GUI.Workspace.MouseButton1Click:connect(function() getaudio(workspace)end)
-GUI.Lighting.MouseButton1Click:connect(function() getaudio(game:GetService('Lighting'))end)
-GUI.SoundS.MouseButton1Click:connect(function() getaudio(game:GetService('SoundService'))end)
-GUI.Clr.MouseButton1Click:connect(function()
-    for _, child in pairs(GUI.Logs:GetChildren()) do
-        if child:FindFirstChild('ImageButton') then local bttn = child:FindFirstChild('ImageButton')
-            if bttn.BackgroundTransparency == 1 then
-                bttn.Parent:Destroy()
-                refreshlist()
-            end
+GUI.All.MouseButton1Click:Connect(function() getaudio(game) end)
+GUI.Workspace.MouseButton1Click:Connect(function() getaudio(workspace) end)
+GUI.Lighting.MouseButton1Click:Connect(function() getaudio(game:GetService('Lighting')) end)
+GUI.SoundS.MouseButton1Click:Connect(function() getaudio(game:GetService('SoundService')) end)
+
+GUI.Clr.MouseButton1Click:Connect(function()
+    for _, child in ipairs(GUI.Logs:GetChildren()) do
+        if child:FindFirstChild('ImageButton') and child.ImageButton.BackgroundTransparency == 1 then
+            child:Destroy()
         end
     end
-end)
-GUI.ClrS.MouseButton1Click:connect(function()
-    for _, child in pairs(GUI.Logs:GetChildren()) do
-        if child:FindFirstChild('ImageButton') then local bttn = child:FindFirstChild('ImageButton')
-            if bttn.BackgroundTransparency == 0 then
-                bttn.Parent:Destroy()
-                refreshlist()
-            end
-        end
-    end
-end)
-autoscan = false
-GUI.AutoScan.MouseButton1Click:connect(function()
-    if autoscan == false then autoscan = true
-        GUI.AutoScan.BackgroundTransparency = 0.5
-        game:FindService('StarterGui'):SetCore('SendNotification', {
-            Title = 'Audio Logger',
-            Text = 'Auto Scan ENABLED',
-            Icon = 'http://www.roblox.com/asset/?id=176572847',
-            Duration = 5,
-        })
-    else autoscan = false
-        GUI.AutoScan.BackgroundTransparency = 0
-        game:FindService('StarterGui'):SetCore('SendNotification', {
-            Title = 'Audio Logger',
-            Text = 'Auto Scan DISABLED',
-            Icon = 'http://www.roblox.com/asset/?id=176572847',
-            Duration = 5,
-        })
-    end
+    refreshlist()
 end)
 
-itemadded = game.DescendantAdded:connect(function(added)
-    task.wait()
-    if autoscan == true and added:IsA('Sound') and not GUI.Logs:FindFirstChild(added.SoundId) and not FindTable(ignore,added.SoundId) then
-        local id = string.match(added.SoundId, "rbxasset://sounds.+") or string.match(added.SoundId, "&hash=.+") or string.match(added.SoundId, "%d+")
-        if id ~= nil then
-            local newsound = GUI.Audio:Clone()
-            if string.sub(id, 1, 6) == "&hash=" or string.sub(id, 1, 7) == "&0hash=" then
-                id = string.sub(id, (string.sub(id, 1, 6) == "&hash=" and 7) or (string.sub(id, 1, 7) == "&0hash=" and 8), string.len(id))
-                newsound.ImageButton.Image = 'rbxassetid://1453863294'
-            end
-            local scrolldown = false
-            newsound.Parent = GUI.Logs
-            newsound.Name = added.SoundId
-            newsound.Visible = true
-            newsound.Position = UDim2.new(0,0,0, pos)
-            if GUI.Logs.CanvasPosition.Y == GUI.Logs.CanvasSize.Y.Offset - 230 then
-                scrolldown = true
-            end
-            GUI.Logs.CanvasSize = UDim2.new(0,0,0, pos+20)
-            pos = pos+20
-            local function findname()
-                Asset = game:GetService("MarketplaceService"):GetProductInfo(id)
-            end
-            local audioname = 'error'
-            local success, message = pcall(findname)
-            if success then
-                newsound.TextLabel.Text = Asset.Name
-                audioname = Asset.Name
-            else 
-                newsound.TextLabel.Text = added.Name
-                audioname = added.Name
-            end
-            local data = Instance.new('StringValue') data.Parent = newsound data.Value = added.SoundId data.Name = 'ID'
-            local data2 = Instance.new('StringValue') data2.Parent = newsound data2.Value = audioname data2.Name = 'NAME'
-            local soundselected = false
-            newsound.ImageButton.MouseButton1Click:Connect(function()
-                if GUI.Info.Visible ~= true then
-                    if soundselected == false then soundselected = true
-                        newsound.ImageButton.BackgroundTransparency = 0
-                    else soundselected = false
-                        newsound.ImageButton.BackgroundTransparency = 1
-                    end
-                end
-            end)
-            newsound.Click.MouseButton1Click:Connect(function()
-                if GUI.Info.Visible ~= true then
-                    GUI.Info.TextLabel.Text = "Name: " ..audioname.. "ID: " .. added.SoundId .. "Workspace Name: " .. added.Name
-                    selectedaudio = added.SoundId
-                    GUI.Info.Visible = true
-                end
-            end)
-            --230'
-            if scrolldown == true then
-                GUI.Logs.CanvasPosition = Vector2.new(0, 9999999999999999999999999999999999999999999, 0, 0)
-            end
+GUI.ClrS.MouseButton1Click:Connect(function()
+    for _, child in ipairs(GUI.Logs:GetChildren()) do
+        if child:FindFirstChild('ImageButton') and child.ImageButton.BackgroundTransparency == 0 then
+            child:Destroy()
         end
     end
+    refreshlist()
 end)
 
-GUI.Info.Copy.MouseButton1Click:Connect(function()
-    if pcall(function() Synapse:Copy(selectedaudio) end) then
-    else
-        local clip = setclipboard or Clipboard.set
-        clip(selectedaudio)
-    end
-    game:FindService('StarterGui'):SetCore('SendNotification', {
+GUI.AutoScan.MouseButton1Click:Connect(function()
+    autoscan = not autoscan
+    GUI.AutoScan.BackgroundTransparency = autoscan and 0.5 or 0
+    StarterGui:SetCore('SendNotification', {
         Title = 'Audio Logger',
-        Text = 'Copied to clipboard',
+        Text = 'Auto Scan ' .. (autoscan and "ENABLED" or "DISABLED"),
         Icon = 'http://www.roblox.com/asset/?id=176572847',
         Duration = 5,
     })
 end)
 
+local itemadded = game.DescendantAdded:Connect(function(added)
+    if autoscan then
+        task.spawn(processAudioElement, added)
+    end
+end)
+
+GUI.Close.MouseButton1Click:Connect(function()
+    GUI:TweenSize(UDim2.new(0, 360, 0, 0), "Out", "Quad", 0.5, true) task.wait(0.6)
+    GUI.Parent:TweenSize(UDim2.new(0, 0, 0, 20), "Out", "Quad", 0.5, true) task.wait(0.6)
+    itemadded:Disconnect()
+    aa:Destroy()
+end)
+
+local min = false
+GUI.Minimize.MouseButton1Click:Connect(function()
+    min = not min
+    GUI:TweenSize(UDim2.new(0, 360, 0, min and 20 or 260), "Out", "Quad", 0.5, true)
+end)
+
+GUI.Info.Copy.MouseButton1Click:Connect(function()
+    local clip = setclipboard or toclipboard or (Clipboard and Clipboard.set)
+    if clip then
+        clip(selectedaudio)
+        StarterGui:SetCore('SendNotification', {
+            Title = 'Audio Logger',
+            Text = 'Copied to clipboard!',
+            Icon = 'http://www.roblox.com/asset/?id=176572847',
+            Duration = 5,
+        })
+    else
+        StarterGui:SetCore('SendNotification', {
+            Title = 'Audio Logger',
+            Text = 'Your executor lacks clipboard access.',
+            Duration = 5,
+        })
+    end
+end)
+
 GUI.Info.Close.MouseButton1Click:Connect(function()
     GUI.Info.Visible = false
-    for _, sound in pairs(game:GetService('Players').LocalPlayer.PlayerGui:GetChildren()) do
-        if sound.Name == 'SampleSound' then
-            sound:Destroy()
-        end
-    end
+    local sample = Players.LocalPlayer.PlayerGui:FindFirstChild('SampleSound')
+    if sample then sample:Destroy() end
     GUI.Info.Listen.Text = 'Listen'
 end)
 
 GUI.Info.Listen.MouseButton1Click:Connect(function()
+    local targetGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+    local existingSample = targetGui:FindFirstChild('SampleSound')
+    
     if GUI.Info.Listen.Text == 'Listen' then
-        local samplesound = Instance.new('Sound') samplesound.Parent = game:GetService('Players').LocalPlayer.PlayerGui
-        samplesound.Looped = true samplesound.SoundId = selectedaudio samplesound:Play() samplesound.Name = 'SampleSound'
+        if existingSample then existingSample:Destroy() end
+        local samplesound = Instance.new('Sound')
+        samplesound.Parent = targetGui
+        samplesound.Looped = true 
+        samplesound.SoundId = selectedaudio 
+        samplesound.Name = 'SampleSound'
         samplesound.Volume = 5
+        samplesound:Play()
         GUI.Info.Listen.Text = 'Stop'
     else
-        for _, sound in pairs(game:GetService('Players').LocalPlayer.PlayerGui:GetChildren()) do
-            if sound.Name == 'SampleSound' then
-                sound:Destroy()
-            end
-        end
+        if existingSample then existingSample:Destroy() end
         GUI.Info.Listen.Text = 'Listen'
     end
 end)
 
-function drag(gui)
-    spawn(function()
-        local UserInputService = game:GetService("UserInputService")
-        local dragging
-        local dragInput
-        local dragStart
-        local startPos
+local function drag(gui)
+    task.spawn(function()
+        local dragging, dragInput, dragStart, startPos
         local function update(input)
             local delta = input.Position - dragStart
             gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), "InOut", "Quart", 0.04, true, nil) 
